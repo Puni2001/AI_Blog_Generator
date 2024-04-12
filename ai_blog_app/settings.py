@@ -11,7 +11,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import os 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(((__file__)))), '.env')
+# print(dotenv_path)
+load_dotenv(dotenv_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!f*4q&&bsy#w)yb=ut7ih%n6h&$1go8&c%$l$wyeej2xs^x0rk'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'BlogDB',
         'USER':'avnadmin',
-        'PASSWORD': 'AVNS_XOFLA-uP0m99AcnD83j',
+        'PASSWORD': os.getenv('PASSWORD'),
         'HOST':'pg-3adecbc2-punith.a.aivencloud.com',
         'PORT':'26164'
     }

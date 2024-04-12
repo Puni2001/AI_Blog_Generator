@@ -10,10 +10,8 @@ from django.conf import settings
 import os
 import assemblyai as aai
 from openai import OpenAI
-
 from .models import BlogPost
 
-# client = OpenAI(api_key="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")
 
 # Create your views here.
 
@@ -66,7 +64,7 @@ def yt_title(link):
 
 def get_transcription(link):
     audio_file = download_audio(link)
-    aai.settings.api_key = "3bf32f70520b41728d3d276147aef7ff"
+    aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
 
     transcriber = aai.Transcriber()
     transcript = transcriber.transcribe(audio_file)
@@ -97,7 +95,7 @@ def blog_details(request, pk):
 from openai import OpenAI, OpenAIError
 
 # Initialize the OpenAI client with your API key
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 
 
