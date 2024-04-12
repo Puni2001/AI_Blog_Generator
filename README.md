@@ -27,4 +27,3 @@ Developed a sophisticated web application that leverages advanced AI and Machine
 - **APIs:** YouTube Data API for fetching video details, AssemblyAI for transcription services, and OpenAI for text generation.
 - **Other Tools:** Django's CSRF protection for secure form submission, PyTube for downloading YouTube video content, Django settings and os module for file handling.
 
-This format gives a comprehensive view of your project, highlighting your technical skills, the complexity of your work, and the impact of the solution you developed. Adjust the description based on the specifics of your project and the technologies you used for accuracy.
