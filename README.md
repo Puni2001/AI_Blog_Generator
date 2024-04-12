@@ -1,6 +1,4 @@
 ﻿# AI_Blog_Generator
-For your resume, you can describe this project and its tech stack in a structured and impactful way. Here's a breakdown that might help you articulate your experience and the technologies you used:
-
 ## Project Description:
 
 **Title:** AI-Powered Blog Content Generation from YouTube Transcripts
