@@ -1,4 +1,8 @@
 ﻿# AI_Blog_Generator
+
+https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/d74f7c5b-fec2-4d1d-9fb6-f99b059a9c70
+
+
 ## Project Description:
 
 **Title:** AI-Powered Blog Content Generation from YouTube Transcripts
