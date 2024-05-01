@@ -30,4 +30,10 @@ Developed a sophisticated web application that leverages advanced AI and Machine
 - **APIs:** YouTube Data API for fetching video details, AssemblyAI for transcription services, and OpenAI for text generation.
 - **Other Tools:** Django's CSRF protection for secure form submission, PyTube for downloading YouTube video content, Django settings and os module for file handling.
 
-![Screenshot (19)](https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/d860feac-c357-4053-9f86-afc7e0a856f6)
+#### Screenshots
+![Login page](https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/dbf45943-6e46-442e-8165-6fd177783005)
+![Main Page](https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/20b9e40a-da52-4b7c-8568-df8fbfa961ba)
+![Saved Blog Posts](https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/343c08b7-dd55-49dc-a4fd-3ba40ad37abb)
+![Details of Blog](https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/55586b20-53e3-4333-afa8-2a289c04bdb5)
+
+
