@@ -2,7 +2,6 @@
 
 https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/3d0c9551-18a6-45d9-8499-1f87fbec5d4b
 
-﻿# AI_Blog_Generator
 ## Project Description:
 
 **Title:** AI-Powered Blog Content Generation from YouTube Transcripts
@@ -31,3 +30,4 @@ Developed a sophisticated web application that leverages advanced AI and Machine
 - **APIs:** YouTube Data API for fetching video details, AssemblyAI for transcription services, and OpenAI for text generation.
 - **Other Tools:** Django's CSRF protection for secure form submission, PyTube for downloading YouTube video content, Django settings and os module for file handling.
 
+![Screenshot (19)](https://github.com/Puni2001/AI_Blog_Generator/assets/111702110/d860feac-c357-4053-9f86-afc7e0a856f6)
