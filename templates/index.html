@@ -89,62 +89,81 @@
         </div>
 
 
-            <!-- section for loading circle -->
-            <div style="display: none;" id="loading-circle" class="load"></div>
-
+           
 
             <!-- Generated Blog Display Section -->
             <section class="mt-10 flex-grow">
                 <h2 class="text-xl mb-4 font-semibold">Generated Blog Article</h2>
                 <div id="blogContent" class="mt-2 text-gray-700 space-y-4">
-                    
-
                 </div>
             </section>
+             <!-- section for loading circle -->
+             <div style="display: none;" id="loading-circle" class="load"></div>
+
         </div>
+        
 
     </div>
 
     <footer class="text-center p-4 text-black mt-6">
         Powered by Punith</footer>
 
-    <script>
-        document.getElementById('generateBlogButton').addEventListener('click', async () => {
-            
-
-            const youtubeLink = document.getElementById('youtubeLink').value;
-            const blogContent = document.getElementById('blogContent');
-            
-            if(youtubeLink) {
-                document.getElementById('loading-circle').style.display = 'block';
-                
-                blogContent.innerHTML = ''; // Clear previous content
-
-                const endpointUrl = '/generate-blog';
-                
-                try {
-                    const response = await fetch(endpointUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ link: youtubeLink })
-                    });
-
-                    const data = await response.json();
-
-                    blogContent.innerHTML = data.content;
-
-                } catch (error) {
-                    console.error("Error occurred:", error);
-                    alert("Something went wrong. Please try again later.");
-                    
+        <script>
+            document.getElementById('generateBlogButton').addEventListener('click', async () => {
+                const youtubeLink = document.getElementById('youtubeLink').value;
+                const blogContent = document.getElementById('blogContent');
+    
+                if (youtubeLink) {
+                    document.getElementById('loading-circle').style.display = 'block';
+                    blogContent.innerHTML = ''; // Clear previous content
+    
+                    const endpointUrl = '/generate-blog';
+    
+                    try {
+                        console.log(`Sending request to ${endpointUrl} with link: ${youtubeLink}`);
+                        const response = await fetch(endpointUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                // Add CSRF token if necessary
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: JSON.stringify({ link: youtubeLink })
+                        });
+    
+                        if (!response.ok) {
+                            // Handle HTTP errors
+                            const errorData = await response.json();
+                            if (response.status === 500 && errorData.error === "API key limit is reached, purchase plan to continue....") {
+                                alert("API key limit is reached, purchase plan to continue....");
+                                document.getElementById('loading-circle').style.display = 'none';
+                                return;
+                            } else {
+                                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+                            }
+                        }
+    
+                        const data = await response.json();
+                        console.log(data);
+    
+                        if (data.content) {
+                            blogContent.innerHTML = data.content;
+                        } else {
+                            console.warn('No content field in response data:', data);
+                            blogContent.innerHTML = '<p>No content generated. Please try again.</p>';
+                        }
+    
+                    } catch (error) {
+                        console.error("Error occurred:", error);
+                        alert(`API key limit is reached, purchase plan to continue...`);
+                    } finally {
+                        document.getElementById('loading-circle').style.display = 'none';
+                    }
+                } else {
+                    alert("Please enter a YouTube link.");
                 }
-                document.getElementById('loading-circle').style.display = 'none';
-            } else {
-                alert("Please enter a YouTube link.");
-            }
-        });
-    </script>
+            });
+        </script>
+ 
 </body>
 </html>

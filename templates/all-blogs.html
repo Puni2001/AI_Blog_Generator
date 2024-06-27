@@ -21,27 +21,81 @@
     </nav>
     
     <!-- Main content container -->
-    <div class="container mx-auto mt-10 px-4 sm:px-0">
-        <div class="mx-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-            <!-- Blog Post Section -->
-            <section>
-                <h2 class="text-xl mb-4 font-semibold">All Blog Posts</h2>
-                <div class="space-y-4">
+<div class="container mx-auto mt-10 px-4 sm:px-0">
+    <div class="mx-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <!-- Blog Post Section -->
+        <section>
+            <h2 class="text-xl mb-4 font-semibold">All Blog Posts</h2>
+            
+            <!-- Button to delete selected blogs -->
+            <button id="delete-selected" class="btn btn-danger bg-red-500 text-white px-4 py-2 rounded-lg border border-red-600 hover:bg-red-600 focus:ring-2 focus:ring-red-500">Delete Selected Blogs</button>
+
+            <!-- Button to delete all blogs -->
+            <button id="delete-all" class="btn btn-danger bg-red-700 text-white px-4 py-2 rounded-lg border border-red-800 hover:bg-red-800 focus:ring-2 focus:ring-red-700">Delete All Blogs</button>
+
+
+            <div class="space-y-4">
+                <form id="blog-form">
                     {% for article in blog_articles reversed %}
-                    <a href="blog-details/{{article.id}}">
-                        <div class="border border-gray-300 p-4 rounded">
+                    <div class="blog-entry border border-gray-300 p-4 rounded flex items-center">
+                        <input type="checkbox" class="select-blog mr-4" name="blog_ids" value="{{article.id}}">
+                        <a href="blog-details/{{article.id}}" class="flex-grow">
                             <h3 class="text-lg font-semibold">{{article.youtube_title}}</h3>
                             <p>{{article.generated_content|truncatechars:80}}</p>
-                        </div>
-                </a>
-                    {%endfor%}
-                   
-                    <!-- Repeat -->
-                </div>
-            </section>
-        </div>
-
+                        </a>
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+        </section>
     </div>
+</div>
+
+<script>
+    document.getElementById('delete-all').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete all blogs?')) {
+            fetch('/delete-all-blogs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    alert('All blogs have been deleted.');
+                    location.reload();
+                } else {
+                    alert('An error occurred while deleting blogs.');
+                }
+            });
+        }
+    });
+
+    document.getElementById('delete-selected').addEventListener('click', function() {
+        const selectedBlogs = Array.from(document.querySelectorAll('.select-blog:checked')).map(cb => cb.value);
+        if (selectedBlogs.length > 0) {
+            if (confirm('Are you sure you want to delete the selected blogs?')) {
+                fetch('/delete-selected-blogs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ blog_ids: selectedBlogs })
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        alert('Selected blogs have been deleted.');
+                        location.reload();
+                    } else {
+                        alert('An error occurred while deleting blogs.');
+                    }
+                });
+            }
+        } else {
+            alert('Please select at least one blog to delete.');
+        }
+    });
+</script>
     <footer class="text-center p-4 text-black mt-6">Powered by Punith</footer>
 </body>
 </html>

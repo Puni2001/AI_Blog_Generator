@@ -39,7 +39,7 @@ def generate_blog(request):
         # Use OpenAI to generate blog content
         blog_content = generate_blog_from_transcription(transcription)
         if not blog_content:
-            return JsonResponse({"error": "Failed to generate blog article"}, status=500)
+            return JsonResponse({"error": "API key limit is reached, purchase plan to continue...."}, status=500)
 
         # Save blog article to database (not implemented in this code snippet)
         new_blog_article = BlogPost.objects.create(
@@ -68,6 +68,7 @@ def get_transcription(link):
 
     transcriber = aai.Transcriber()
     transcript = transcriber.transcribe(audio_file)
+    os.remove(audio_file)
 
     return transcript.text
 
@@ -113,17 +114,23 @@ def generate_blog_from_transcription(transcription):
         completion = response.choices[0]
         generated_content = completion.text
 
+        print("*"*5,generated_content)       # If the content is empty or null, return None
+        if not generated_content:
+            # logger.error("API key limit is reached.")
+            return JsonResponse({"error": "API key limit is reached, purchase plan to continue...."}, status=500)
+
+
         # Split the generated content into paragraphs
         paragraphs = generated_content.split('\n\n')
 
         # Create a new text with paragraphs after every 3 paragraphs
         generated_content = '\n\n'.join([''.join(sublist) for sublist in paragraphs])
-
-        return generated_content
     
     except OpenAIError as e:
         # Handle OpenAI API errors
-        return f"Error: {e}"
+        print("API key limit is reached, purchase plan to continue....")
+        print(f"Error generating blog: {e}")  # Log the error for debugging
+        return None
     
 def user_login(request):
     if request.method == 'POST':
@@ -164,3 +171,23 @@ def user_signup(request):
             error_message = "Password do not match"
             return render(request, 'signup.html', {'error_message': error_message})
     return render(request, "signup.html")
+
+
+@csrf_exempt
+def delete_all_blogs(request):
+    if request.method == 'POST':
+        BlogPost.objects.all().delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def delete_selected_blogs(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            blog_ids = data.get('blog_ids', [])
+            BlogPost.objects.filter(id__in=blog_ids).delete()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
