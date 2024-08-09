@@ -6,14 +6,21 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from pytube import YouTube
+from pydub import AudioSegment
 from django.conf import settings
 import os
 import assemblyai as aai
-from openai import OpenAI
+# from openai import OpenAI, OpenAIError
 from .models import BlogPost
+import google.generativeai as genai
+import os
+import yt_dlp
 
+# # Initialize the OpenAI client with your API key
+# client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-# Create your views here.
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 @login_required
 def index(request):
@@ -31,7 +38,7 @@ def generate_blog(request):
         # Get YouTube title
         title = yt_title(yt_link)
 
-        # Get transcription 
+        # Get transcription
         transcription = get_transcription(yt_link)
         if not transcription:
             return JsonResponse({"error": "Failed to get transcript"}, status=500)
@@ -41,7 +48,7 @@ def generate_blog(request):
         if not blog_content:
             return JsonResponse({"error": "API key limit is reached, purchase plan to continue...."}, status=500)
 
-        # Save blog article to database (not implemented in this code snippet)
+        # Save blog article to database
         new_blog_article = BlogPost.objects.create(
             user=request.user,
             youtube_title=title,
@@ -50,9 +57,8 @@ def generate_blog(request):
         )
         new_blog_article.save()
 
-
-        # Return blog article as response 
-        return JsonResponse({"content": blog_content}, status=200)  
+        # Return blog article as response
+        return JsonResponse({"content": blog_content}, status=200)
 
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -69,23 +75,99 @@ def get_transcription(link):
     transcriber = aai.Transcriber()
     transcript = transcriber.transcribe(audio_file)
     os.remove(audio_file)
+    print("*"*10,transcript.text)
 
     return transcript.text
 
+# def download_audio(link):
+    # yt = YouTube(link)
+    # video = yt.streams.filter(only_audio=True).first()
+    
+    # # Download the audio stream
+    # out_file = video.download(output_path=settings.MEDIA_ROOT)
+    
+    # # Set the output file paths
+    # base, ext = os.path.splitext(out_file)
+    # new_file = base + '.mp3'
+    
+    # # Convert the file to mp3 using pydub
+    # audio = AudioSegment.from_file(out_file)
+    # audio.export(new_file, format='mp3')
+    
+    # # Optionally, remove the original file if you don't need it
+    # os.remove(out_file)
+    
+    # return new_file
 def download_audio(link):
-    yt = YouTube(link)
-    video = yt.streams.filter(only_audio=True).first()
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': os.path.join(settings.MEDIA_ROOT, '%(title)s.%(ext)s'),
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'ffmpeg_location': 'C:\Users\Admin\Downloads\ffmpeg-7.0.2\ffmpeg-7.0.2/bin/',  # Specify the path where ffmpeg is installed
+    }
 
-    out_file = video.download(output_path=settings.MEDIA_ROOT)
-    base, ext = os.path.splitext(out_file)
-    new_file = base + '.mp3'
-    os.rename(out_file, new_file)
-    return new_file
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(link, download=True)
+        file_path = ydl.prepare_filename(info_dict)
+        base, ext = os.path.splitext(file_path)
+        return base + '.mp3'
 
+def generate_blog_from_transcription(transcription):
+    try:
+        # # Construct the prompt
+        # prompt = f"Based on the following transcript from a YouTube video, write a comprehensive blog article. Write it based on the transcript, but don't make it look like a YouTube video. Make it look like a proper blog article:\n\n{transcription}\n\nArticle:"
+        
+    #     response = client.completions.create(
+    #         model='gpt-3.5-turbo-instruct',
+    #         prompt=prompt,
+    #         max_tokens=1000
+    #     )
+    #     # Extracting the completion
+    #     completion = response.choices[0]
+    #     generated_content = completion.text
+
+    #     if not generated_content:
+    #         return None
+
+    #     # Split the generated content into paragraphs
+    #     paragraphs = generated_content.split('\n\n')
+
+    #     # Create a new text with paragraphs after every 3 paragraphs
+    #     generated_content = '\n\n'.join([''.join(sublist) for sublist in paragraphs])
+
+    #     return generated_content
+
+    # except OpenAIError as e:
+    #     print(f"Error generating blog: {e}")
+    #     return None
+        response = model.generate_content( f"Based on the following transcript from a YouTube video, write a comprehensive blog article. Write it based on the transcript, but don't make it look like a YouTube video. Make it look like a proper blog article:\n\n{transcription}\n\nArticle:"
+        )
+        generated_content = response.text
+
+        if not generated_content:
+            return None
+
+        # Split the generated content into paragraphs
+        paragraphs = generated_content.split('\n\n')
+
+        # Create a new text with paragraphs after every 3 paragraphs
+        generated_content = '\n\n'.join([''.join(sublist) for sublist in paragraphs])
+
+        return generated_content
+    
+    except Exception as e:
+        print(e)
+        
+@login_required
 def blog_list(request):
     blog_articles = BlogPost.objects.filter(user=request.user)
-    return render(request,"all-blogs.html",{'blog_articles': blog_articles})
+    return render(request, "all-blogs.html", {'blog_articles': blog_articles})
 
+@login_required
 def blog_details(request, pk):
     blog_article_detail = BlogPost.objects.get(id=pk)
     if request.user == blog_article_detail.user:
@@ -93,45 +175,6 @@ def blog_details(request, pk):
     else:
         return redirect('/')
 
-from openai import OpenAI, OpenAIError
-
-# Initialize the OpenAI client with your API key
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-
-
-
-def generate_blog_from_transcription(transcription):
-    try:
-        # Construct the prompt
-        prompt = f"Based on the following transcript from a YouTube video, write a comprehensive blog article. Write it based on the transcript, but don't make it look like a YouTube video. Make it look like a proper blog article:\n\n{transcription}\n\nArticle:"
-
-        response = client.completions.create(
-            model='gpt-3.5-turbo-instruct',
-            prompt=prompt,
-            max_tokens=1000
-        )
-        # Extracting the completion
-        completion = response.choices[0]
-        generated_content = completion.text
-
-        print("*"*5,generated_content)       # If the content is empty or null, return None
-        if not generated_content:
-            # logger.error("API key limit is reached.")
-            return JsonResponse({"error": "API key limit is reached, purchase plan to continue...."}, status=500)
-
-
-        # Split the generated content into paragraphs
-        paragraphs = generated_content.split('\n\n')
-
-        # Create a new text with paragraphs after every 3 paragraphs
-        generated_content = '\n\n'.join([''.join(sublist) for sublist in paragraphs])
-    
-    except OpenAIError as e:
-        # Handle OpenAI API errors
-        print("API key limit is reached, purchase plan to continue....")
-        print(f"Error generating blog: {e}")  # Log the error for debugging
-        return None
-    
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['Username']
@@ -171,7 +214,6 @@ def user_signup(request):
             error_message = "Password do not match"
             return render(request, 'signup.html', {'error_message': error_message})
     return render(request, "signup.html")
-
 
 @csrf_exempt
 def delete_all_blogs(request):
