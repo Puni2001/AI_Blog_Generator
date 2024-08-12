@@ -60,12 +60,19 @@ def generate_blog(request):
 
 def yt_title(link):
     try:
-        yt = YouTube(link)
-        return yt.title
+        # Create a YT-DLP object with the given URL
+        ydl = youtube_dl.YoutubeDL()
+        
+        # Extract information from the video URL
+        info = ydl.extract_info(link, download=False)
+        
+        # Retrieve and print the video title
+        title = info.get('title', 'Unknown Title')
+        print("*" * 10, title)
+        return title
     except Exception as e:
         print(f"Error getting YouTube title: {e}")
         return "Unknown Title"
-
 def get_transcription(link):
     audio_file = download_audio(link)
     #path = os.path.join(settings.MEDIA_ROOT)
@@ -80,7 +87,12 @@ def get_transcription(link):
     return transcript.text
 
 def download_audio(link):
+    # Define the final audio path
     final_audio_path = os.path.join(settings.MEDIA_ROOT, 'audio', 'audio.mp3')
+    extracted_audio_path = os.path.join(settings.MEDIA_ROOT, 'audio', 'audio.mp3')  # Adjust if needed
+
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(final_audio_path), exist_ok=True)
 
     # Define options for yt-dlp
     ydl_opts = {
@@ -91,14 +103,23 @@ def download_audio(link):
             'preferredquality': '192',
         }],
         'outtmpl': final_audio_path,
+        'postprocessor_args': [
+            '-loglevel', 'quiet',
+            '-ab', '192k',
+            '-y',  # Overwrite output files without asking
+        ],
     }
 
     try:
         # Download the audio
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([link])
+        
+        # Ensure the renamed file is accessible
+        if not os.path.exists(extracted_audio_path):
+            extracted_audio_path += '.mp3'
             
-        return final_audio_path
+        return extracted_audio_path
     except youtube_dl.DownloadError as e:
         print(f"Error during download: {e}")
     except Exception as e:
@@ -109,9 +130,16 @@ def download_audio(link):
 def generate_blog_from_transcription(transcription):
     try:
         response = model.generate_content(
-            f"Based on the following transcript from a YouTube video, write a comprehensive blog article. "
-            f"Write it based on the transcript, but don't make it look like a YouTube video. "
-            f"Make it look like a proper blog article:\n\n{transcription}\n\nArticle:"
+            f"Create a well-structured blog article based on the following transcript. "
+            f"The article should include the following sections: Introduction, Main Points, Analysis, and Conclusion. "
+            f"Use clear headings and subheadings. Break down complex ideas into bullet points or numbered lists. "
+            f"Ensure the article is engaging and easy to read. Avoid making it sound like it's based on a YouTube transcript, and instead, make it a coherent blog post:\n\n{transcription}\n\n"
+            f"**Structure**:\n"
+            f"1. **Introduction**: Briefly introduce the topic and set the tone for the article.\n"
+            f"2. **Main Points**: Highlight the key points from the transcript. Use bullet points or subheadings for clarity.\n"
+            f"3. **Analysis**: Offer an in-depth analysis of the topic. Discuss the implications, interpretations, or lessons learned.\n"
+            f"4. **Conclusion**: Summarize the main ideas and provide a closing thought or call to action.\n\n"
+            f"**Article**:"
         )
         generated_content = response.text
 
@@ -124,7 +152,6 @@ def generate_blog_from_transcription(transcription):
     except Exception as e:
         print(f"Error generating blog content: {e}")
         return None
-
 @login_required
 def blog_list(request):
     blog_articles = BlogPost.objects.filter(user=request.user)
