@@ -74,7 +74,7 @@ def yt_title(link):
         return "Unknown Title"
 def get_transcription(link):
     audio_file = download_audio(link)
-    #path = os.path.join(settings.MEDIA_ROOT)
+    audio_file = os.path.join(settings.MEDIA_ROOT,"audio", "audio.mp3.mp3")
     if not audio_file:
         return None
     
@@ -87,8 +87,9 @@ def get_transcription(link):
 
 def download_audio(link):
     # Define the final audio path
-    final_audio_path = os.path.join(settings.MEDIA_ROOT, 'audio', 'audio.mp3')
-    extracted_audio_path = os.path.join(settings.MEDIA_ROOT, 'audio', 'audio.mp3')  # Adjust if needed
+    final_audio_path = os.path.join(settings.MEDIA_ROOT,  'audio')
+    print(final_audio_path, "*"*4)
+    #extracted_audio_path = os.path.join(settings.MEDIA_ROOT, )  # Adjust if needed
 
     # Ensure the directory exists
     os.makedirs(os.path.dirname(final_audio_path), exist_ok=True)
@@ -114,11 +115,11 @@ def download_audio(link):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([link])
         
-        # Ensure the renamed file is accessible
-        if not os.path.exists(extracted_audio_path):
-            extracted_audio_path += '.mp3'
+        # # Ensure the renamed file is accessible
+        # if not os.path.exists(extracted_audio_path):
+            #extracted_audio_path += '.mp3'
             
-        return extracted_audio_path
+        return final_audio_path
     except youtube_dl.DownloadError as e:
         print(f"Error during download: {e}")
     except Exception as e:
