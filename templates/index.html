@@ -41,7 +41,7 @@
             <h1 class="text-3xl font-bold">AI Blog Generator</h1>
             <div>
                 <a href="{% url 'index' %}" class="text-white hover:underline mx-4">Welcome {{ user.username }}</a>
-                <a href="{% url 'blog-list' %}" class="text-white hover:underline mx-4">Saved Blog Posts</a>
+                <a href="{% url 'blog_generator:blog-list' %}" class="text-white hover:underline mx-4">Saved Blog Posts</a>
                 <a href="{% url 'logout' %}" class="text-white hover:underline">Logout</a>
             </div>
         </div>

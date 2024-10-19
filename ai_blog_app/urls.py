@@ -23,7 +23,10 @@ from blog_generator import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('', include('blog_generator.urls')),  # Change this line
+    path('', include('blog_generator.urls', namespace='blog_generator')),  # Add namespace here
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('signup/', views.user_signup, name='signup'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
