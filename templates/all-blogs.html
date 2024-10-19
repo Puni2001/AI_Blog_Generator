@@ -3,99 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Blogs Posts</title>
+    <title>All Blog Posts - AI Blog Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-minimal@4/minimal.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </head>
-<body class="flex flex-col min-h-scrren bg-gray-100 font-sans antialised">
-     <!-- Navbar -->
-     <nav class="bg-blue-600 p-4 text-white flex justify-between">
-        <div>
-            <h1 class="text-3xl font-bold">AI Blog Generator</h1>
-        </div>
-        <div>
-            <a href="#" class="text-white hover:underline mx-4">Welcome {{ user.username }}</a>
-            <a href="/blog-list" class="text-white hover:underline mx-4">Saved Blog Posts</a>
-            <a href="#" class="text-white hover:underline">Logout</a>
+<body class="flex flex-col min-h-screen bg-gray-100 font-sans antialiased">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 p-4 text-white shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-3xl font-bold hover:text-blue-200 transition duration-300">AI Blog Generator</a>
+            <div class="space-x-6">
+                <a href="/" class="text-white hover:text-blue-200 transition duration-300">Home</a>
+                <a href="#" class="text-white hover:text-blue-200 transition duration-300">Welcome {{ user.username }}</a>
+                <a href="/blog-list" class="text-white hover:text-blue-200 transition duration-300">Saved Blog Posts</a>
+                <a href="/logout" class="text-white hover:text-blue-200 transition duration-300">Logout</a>
+            </div>
         </div>
     </nav>
     
     <!-- Main content container -->
-<div class="container mx-auto mt-10 px-4 sm:px-0">
-    <div class="mx-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <!-- Blog Post Section -->
-        <section>
-            <h2 class="text-xl mb-4 font-semibold">All Blog Posts</h2>
-            
-            <!-- Button to delete selected blogs -->
-            <button id="delete-selected" class="btn btn-danger bg-red-500 text-white px-4 py-2 rounded-lg border border-red-600 hover:bg-red-600 focus:ring-2 focus:ring-red-500">Delete Selected Blogs</button>
+    <main class="container mx-auto mt-10 px-4 sm:px-0 flex-grow">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+            <!-- Blog Post Section -->
+            <section>
+                <h2 class="text-3xl mb-8 font-bold text-gray-800">All Blog Posts</h2>
+                
+                <div class="flex space-x-4 mb-8">
+                    <!-- Button to delete selected blogs -->
+                    <button id="delete-selected" class="btn btn-danger bg-red-500 text-white px-6 py-2 rounded-lg border border-red-600 hover:bg-red-600 focus:ring-2 focus:ring-red-500 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Delete Selected</button>
 
-            <!-- Button to delete all blogs -->
-            <button id="delete-all" class="btn btn-danger bg-red-700 text-white px-4 py-2 rounded-lg border border-red-800 hover:bg-red-800 focus:ring-2 focus:ring-red-700">Delete All Blogs</button>
+                    <!-- Button to delete all blogs -->
+                    <button id="delete-all" class="btn btn-danger bg-red-700 text-white px-6 py-2 rounded-lg border border-red-800 hover:bg-red-800 focus:ring-2 focus:ring-red-700 transition duration-300">Delete All</button>
+                </div>
 
+                <div class="space-y-6">
+                    <form id="blog-form">
+                        {% for article in blog_articles reversed %}
+                        <div class="blog-entry border border-gray-300 p-6 rounded-lg flex items-center hover:bg-gray-50 transition duration-300">
+                            <input type="checkbox" class="select-blog mr-6 h-5 w-5 text-blue-600 rounded focus:ring-blue-500" name="blog_ids" value="{{article.id}}">
+                            <a href="blog-details/{{article.id}}" class="flex-grow group">
+                                <h3 class="text-xl font-semibold text-blue-600 group-hover:text-blue-800 transition duration-300">{{article.youtube_title}}</h3>
+                                <p class="text-gray-600 mt-2">{{article.generated_content|truncatechars:100}}</p>
+                            </a>
+                        </div>
+                        {% empty %}
+                        <p class="text-gray-500 italic text-center py-8">No blog posts available. Generate some awesome content!</p>
+                        {% endfor %}
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
 
-            <div class="space-y-4">
-                <form id="blog-form">
-                    {% for article in blog_articles reversed %}
-                    <div class="blog-entry border border-gray-300 p-4 rounded flex items-center">
-                        <input type="checkbox" class="select-blog mr-4" name="blog_ids" value="{{article.id}}">
-                        <a href="blog-details/{{article.id}}" class="flex-grow">
-                            <h3 class="text-lg font-semibold">{{article.youtube_title}}</h3>
-                            <p>{{article.generated_content|truncatechars:80}}</p>
-                        </a>
-                    </div>
-                    {% endfor %}
-                </form>
-            </div>
-        </section>
-    </div>
-</div>
+    <footer class="text-center p-6 text-gray-600 mt-10 bg-white shadow-inner">
+        <p>&copy; 2023 AI Blog Generator. Powered by Punith</p>
+    </footer>
 
-<script>
-    document.getElementById('delete-all').addEventListener('click', function() {
-        if (confirm('Are you sure you want to delete all blogs?')) {
-            fetch('/delete-all-blogs', {
+    <script>
+        const deleteSelectedBtn = document.getElementById('delete-selected');
+        const deleteAllBtn = document.getElementById('delete-all');
+        const checkboxes = document.querySelectorAll('.select-blog');
+
+        // Enable/disable delete selected button based on checkbox state
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('select-blog')) {
+                deleteSelectedBtn.disabled = ![...checkboxes].some(cb => cb.checked);
+            }
+        });
+
+        deleteAllBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete all!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteBlogs('/delete-all-blogs');
+                }
+            });
+        });
+
+        deleteSelectedBtn.addEventListener('click', function() {
+            const selectedBlogs = Array.from(document.querySelectorAll('.select-blog:checked')).map(cb => cb.value);
+            if (selectedBlogs.length > 0) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete selected!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteBlogs('/delete-selected-blogs', { blog_ids: selectedBlogs });
+                    }
+                });
+            }
+        });
+
+        function deleteBlogs(url, body = null) {
+            fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': '{{ csrf_token }}'
-                }
+                },
+                body: body ? JSON.stringify(body) : null
             }).then(response => response.json()).then(data => {
                 if (data.success) {
-                    alert('All blogs have been deleted.');
-                    location.reload();
+                    Swal.fire(
+                        'Deleted!',
+                        'Your blog post(s) have been deleted.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
                 } else {
-                    alert('An error occurred while deleting blogs.');
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while deleting blogs. Please try again.',
+                        'error'
+                    );
                 }
+            }).catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'An unexpected error occurred. Please try again later.',
+                    'error'
+                );
             });
         }
-    });
-
-    document.getElementById('delete-selected').addEventListener('click', function() {
-        const selectedBlogs = Array.from(document.querySelectorAll('.select-blog:checked')).map(cb => cb.value);
-        if (selectedBlogs.length > 0) {
-            if (confirm('Are you sure you want to delete the selected blogs?')) {
-                fetch('/delete-selected-blogs', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({ blog_ids: selectedBlogs })
-                }).then(response => response.json()).then(data => {
-                    if (data.success) {
-                        alert('Selected blogs have been deleted.');
-                        location.reload();
-                    } else {
-                        alert('An error occurred while deleting blogs.');
-                    }
-                });
-            }
-        } else {
-            alert('Please select at least one blog to delete.');
-        }
-    });
-</script>
-    <footer class="text-center p-4 text-black mt-6">Powered by Punith</footer>
+    </script>
 </body>
 </html>
