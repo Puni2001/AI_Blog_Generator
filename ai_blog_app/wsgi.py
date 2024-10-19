@@ -8,13 +8,11 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 """
 
 import os
-
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ai_blog_app.settings')
 
 application = get_wsgi_application()
 
-# Add these lines at the end of the file
+# Add this line for Vercel
 app = application
-handler = application
