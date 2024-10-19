@@ -25,6 +25,6 @@
     }
   ],
   "env": {
-    "VERCEL_ENV": "production"
+    "PYTHONPATH": "/var/task"
   }
 }

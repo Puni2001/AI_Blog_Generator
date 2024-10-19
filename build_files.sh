@@ -2,7 +2,7 @@
 
 # Update pip
 echo "Updating pip..."
-python3.9 pip install -U pip
+python3 -m pip install --upgrade pip
 
 # Install dependencies
 
@@ -11,6 +11,6 @@ pip install -r requirements.txt
 
 # Collect staticfiles
 echo "Collecting static files..."
-python manage.py collectstatic --noinput --clear
+python3 manage.py collectstatic --noinput --clear
 
 echo "Build process completed!"
