@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "ai_blog_app/wsgi.py",
+      "src": "vercel_app.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
@@ -25,7 +25,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "ai_blog_app/wsgi.py"
+      "dest": "vercel_app.py"
     }
   ],
   "env": {
