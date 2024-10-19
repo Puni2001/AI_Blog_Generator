@@ -20,6 +20,10 @@
       "dest": "/static/$1"
     },
     {
+      "src": "/favicon.ico",
+      "dest": "/static/favicon.ico"
+    },
+    {
       "src": "/(.*)",
       "dest": "ai_blog_app/wsgi.py"
     }
