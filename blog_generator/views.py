@@ -226,8 +226,8 @@ def blog_details(request, pk):
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('Username')
+        password = request.POST.get('Password')
         if username and password:
             # Check if the user exists
             try:
@@ -241,16 +241,20 @@ def user_login(request):
                 login(request, user)
                 return redirect('index')
             else:
+<<<<<<< HEAD
                 # Return an 'invalid login' error message.
                 return render(request, 'login.html', {'error': 'Invalid password'})
+=======
+                return render(request, 'login.html', {'error_message': 'Invalid username or password'})
+>>>>>>> temp_branch
         else:
-            return render(request, 'login.html', {'error': 'Please provide both username and password'})
+            return render(request, 'login.html', {'error_message': 'Please provide both username and password'})
     else:
         return render(request, 'login.html')
 
 def user_logout(request):
     logout(request)
-    return redirect("/")
+    return redirect('login')
 
 def user_signup(request):
     if request.method == "POST":
