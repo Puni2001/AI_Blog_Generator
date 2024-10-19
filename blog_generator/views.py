@@ -229,13 +229,20 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         if username and password:
+            # Check if the user exists
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return render(request, 'login.html', {'error': 'User does not exist. Please sign up first.'})
+            
+            # Authenticate the user
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('index')
             else:
                 # Return an 'invalid login' error message.
-                return render(request, 'login.html', {'error': 'Invalid username or password'})
+                return render(request, 'login.html', {'error': 'Invalid password'})
         else:
             return render(request, 'login.html', {'error': 'Please provide both username and password'})
     else:
@@ -247,10 +254,10 @@ def user_logout(request):
 
 def user_signup(request):
     if request.method == "POST":
-        username = request.POST.get("Username")
-        email = request.POST.get("Email")
-        password = request.POST.get("Password")
-        repeat_password = request.POST.get("RepeatPassword")
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        repeat_password = request.POST.get("repeat_password")
 
         if password == repeat_password:
             try:

@@ -42,7 +42,7 @@
                         {% for article in blog_articles reversed %}
                         <div class="blog-entry border border-gray-300 p-6 rounded-lg flex items-center hover:bg-gray-50 transition duration-300">
                             <input type="checkbox" class="select-blog mr-6 h-5 w-5 text-blue-600 rounded focus:ring-blue-500" name="blog_ids" value="{{article.id}}">
-                            <a href="blog-details/{{article.id}}" class="flex-grow group">
+                            <a href="{% url 'blog-details' article.id %}" class="flex-grow group">
                                 <h3 class="text-xl font-semibold text-blue-600 group-hover:text-blue-800 transition duration-300">{{article.youtube_title}}</h3>
                                 <p class="text-gray-600 mt-2">{{article.generated_content|truncatechars:100}}</p>
                             </a>
