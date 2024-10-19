@@ -14,8 +14,8 @@
             <h1 class="text-3xl font-bold">AI Blog Generator</h1>
         </div>
         <div>
-            <a href="login" class="text-white hover:underline" style="margin-right: 20px;">Login</a>
-            <a href="signup" class="text-white hover:underline">Signup</a>
+            <a href="{% url 'login' %}" class="text-white hover:underline" style="margin-right: 20px;">Login</a>
+            <a href="{% url 'signup' %}" class="text-white hover:underline">Signup</a>
         </div>
     </nav>
     
@@ -24,7 +24,7 @@
         <div class="bg-white p-8 shadow-md rounded-lg max-w-md w-full">
             
             <!-- Login form -->
-            <form class="space-y-4" action="" method="POST">
+            <form class="space-y-4" action="{% url 'login' %}" method="POST">
                 {% csrf_token %}
                 {% if error_message %}
                     <div align='center' style="color: red;">
@@ -35,13 +35,13 @@
                 <h2 class="text-xl font-semibold">Login</h2>
                 <div>
                     <label for="Username" class="block mb-1 font-medium">Username </label>
-                    <input  type="text" id="Username" name="Username" placeholder="Enter your Username" class="w-full p-2 border rounded"> </input>
+                    <input type="text" id="Username" name="Username" placeholder="Enter your Username" class="w-full p-2 border rounded">
                 </div>
                 <div>
                     <label for="Password" class="block mb-1 font-medium">Password </label>
-                    <input  type="Password" id="Password" name="Password" placeholder="Enter your Password" class="w-full p-2 border rounded"> </input>
+                    <input type="password" id="Password" name="Password" placeholder="Enter your Password" class="w-full p-2 border rounded">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 ">Login</button>
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Login</button>
             </form>
         </div>
     </div>    
