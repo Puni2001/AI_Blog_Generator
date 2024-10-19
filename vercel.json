@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "vercel_app.py",
+      "src": "ai_blog_app/wsgi.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     },
@@ -20,15 +20,12 @@
       "dest": "/static/$1"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/static/favicon.ico"
-    },
-    {
       "src": "/(.*)",
-      "dest": "vercel_app.py"
+      "dest": "ai_blog_app/wsgi.py"
     }
   ],
   "env": {
-    "PYTHONPATH": "/var/task"
+    "PYTHONPATH": "/var/task",
+    "DATABASE_URL": "postgres://avnadmin:AVNS_XOFLA-uP0m99AcnD83j@pg-3adecbc2-punith.a.aivencloud.com:26164/defaultdb?sslmode=require"
   }
 }
