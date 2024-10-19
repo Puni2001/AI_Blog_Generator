@@ -23,5 +23,8 @@
       "src": "/(.*)",
       "dest": "ai_blog_app/wsgi.py"
     }
-  ]
+  ],
+  "env": {
+    "VERCEL_ENV": "production"
+  }
 }
