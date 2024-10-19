@@ -241,12 +241,7 @@ def user_login(request):
                 login(request, user)
                 return redirect('index')
             else:
-<<<<<<< HEAD
-                # Return an 'invalid login' error message.
-                return render(request, 'login.html', {'error': 'Invalid password'})
-=======
                 return render(request, 'login.html', {'error_message': 'Invalid username or password'})
->>>>>>> temp_branch
         else:
             return render(request, 'login.html', {'error_message': 'Please provide both username and password'})
     else:
