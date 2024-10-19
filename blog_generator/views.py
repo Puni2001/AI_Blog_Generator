@@ -226,15 +226,18 @@ def blog_details(request, pk):
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('index')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            else:
+                # Return an 'invalid login' error message.
+                return render(request, 'login.html', {'error': 'Invalid username or password'})
         else:
-            # Return an 'invalid login' error message.
-            return render(request, 'login.html', {'error': 'Invalid username or password'})
+            return render(request, 'login.html', {'error': 'Please provide both username and password'})
     else:
         return render(request, 'login.html')
 
