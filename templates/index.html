@@ -6,31 +6,68 @@
     <title>AI Blog Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
+        /* Loader Animation */
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+    
         .load {
             width: 50px;
             height: 50px;
             margin: 20px auto;
-            border: solid 5px #8822aa;
+            border: 5px solid #8822aa;
             border-radius: 50%;
             border-right-color: transparent;
             border-bottom-color: transparent;
             animation: rotate 1s linear infinite;
         }
+    
+        /* Markdown Body Styling */
         .markdown-body {
-            font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
             font-size: 16px;
             line-height: 1.5;
             word-wrap: break-word;
         }
-        .markdown-body h1 { font-size: 2em; border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
-        .markdown-body h2 { font-size: 1.5em; border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
-        .markdown-body code { padding: .2em .4em; background-color: rgba(27,31,35,.05); border-radius: 3px; }
-        .markdown-body pre { padding: 16px; overflow: auto; font-size: 85%; line-height: 1.45; background-color: #f6f8fa; border-radius: 3px; }
+    
+        .markdown-body h1 {
+            font-size: 2em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+    
+        .markdown-body h2 {
+            font-size: 1.5em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+        }
+    
+        .markdown-body code {
+            padding: 0.2em 0.4em;
+            background-color: rgba(27, 31, 35, 0.05);
+            border-radius: 3px;
+        }
+    
+        .markdown-body pre {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #f6f8fa;
+            border-radius: 3px;
+        }
+    
+        /* Body and Background Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: linear-gradient(to bottom, #f5f3f7, #d4b6f4, #f9e4f8); /* Soft Gemini gradient */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
     </style>
+    
     {% load static %}
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 </head>
@@ -63,7 +100,7 @@
             <section class="mb-8">
                 <h2 class="text-xl mb-4 font-semibold">Enter YouTube Video Link</h2>
                 <div class="flex space-x-4">
-                    <input id="youtubeLink" name="youtubeLink" type="url" placeholder="Paste YouTube Link..." class="flex-grow p-2 border border-blue-400 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input id="youtubeLink" name="youtubeLink" type="url" placeholder="Paste YouTube Link..." class="flex-grow p-2 border border-blue-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <button id="generateBlogButton" class="bg-gradient-to-r from-pink-600 via-red-400 to-pink-300 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">Generate</button>
                 </div>
             </section>
@@ -74,10 +111,10 @@
             <!-- Generated Blog Display Section -->
             <section class="mt-10">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Generated Blog Article</h2>
+                    <h2 id="titleofgenerated" class="text-xl font-semibold hidden">Generated Blog Article</h2>
                     <button id="clearContentButton" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 hidden">Clear Content</button>
                 </div>
-                <div id="blogContent" class="mt-2 text-gray-700 space-y-4 markdown-body border border-gray-200 rounded-md p-4"></div>
+                <div id="blogContent" class="mt-2 text-gray-700 space-y-4 markdown-body border border-gray-200 rounded-md p-4 hidden"></div>
             </section>
         </div>
     </main>
@@ -121,6 +158,8 @@
                     if (data.content) {
                         blogContent.innerHTML = parseMarkdown(data.content);
                         clearContentButton.classList.remove('hidden');
+                        titleofgenerated.classList.remove('hidden');
+                        blogContent.classList.remove('hidden');
                     } else {
                         blogContent.innerHTML = '<p class="text-red-500">No content generated. Please try again.</p>';
                     }

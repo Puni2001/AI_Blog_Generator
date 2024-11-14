@@ -83,7 +83,7 @@
                 confirmButtonText: 'Yes, delete all!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deleteBlogs('/delete-all-blogs');
+                    deleteBlogs('/delete-all-blogs/');
                 }
             });
         });
@@ -101,7 +101,7 @@
                     confirmButtonText: 'Yes, delete selected!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        deleteBlogs('/delete-selected-blogs', { blog_ids: selectedBlogs });
+                        deleteBlogs('/delete-selected-blogs/', { blog_ids: selectedBlogs });
                     }
                 });
             }
