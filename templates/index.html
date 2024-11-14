@@ -36,13 +36,13 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100 font-sans antialiased">
     <!-- Navbar -->
-    <nav class="bg-blue-600 p-4 text-white">
+    <nav class="bg-gradient-to-r from-pink-600 via-red-200 to-pink-700 p-4 text-white">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-3xl font-bold">AI Blog Generator</h1>
             <div>
-                <a href="{% url 'index' %}" class="text-white hover:underline mx-4">Welcome {{ user.username }}</a>
-                <a href="{% url 'blog_generator:blog-list' %}" class="text-white hover:underline mx-4">Saved Blog Posts</a>
-                <a href="{% url 'logout' %}" class="text-white hover:underline">Logout</a>
+                <a href="{% url 'index' %}" class="text-blue hover:underline mx-4">Welcome {{ user.username }}</a>
+                <a href="{% url 'blog_generator:blog-list' %}" class="text-blue hover:underline mx-4">Saved Blog Posts</a>
+                <a href="{% url 'logout' %}" class="text-blue hover:underline">Logout</a>
             </div>
         </div>
     </nav>
@@ -64,7 +64,7 @@
                 <h2 class="text-xl mb-4 font-semibold">Enter YouTube Video Link</h2>
                 <div class="flex space-x-4">
                     <input id="youtubeLink" name="youtubeLink" type="url" placeholder="Paste YouTube Link..." class="flex-grow p-2 border border-blue-400 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="generateBlogButton" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">Generate</button>
+                    <button id="generateBlogButton" class="bg-gradient-to-r from-pink-600 via-red-400 to-pink-300 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">Generate</button>
                 </div>
             </section>
 
