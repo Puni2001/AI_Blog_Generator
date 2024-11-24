@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Create a virtual environment
+python3 -m venv venv
+source venv/bin/activate
 # Update pip
 echo "Updating pip..."
 python3 -m pip install --upgrade pip
