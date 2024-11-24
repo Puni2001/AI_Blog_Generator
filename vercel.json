@@ -26,6 +26,6 @@
   ],
   "env": {
     "PYTHONPATH": "/var/task",
-    "DATABASE_URL": "ep-purple-cell-a4li5u4n-pooler.us-east-1.aws.neon.tech"
+    "DATABASE_URL": "postgres://default:eFQu5NRjrAh6@ep-purple-cell-a4li5u4n.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
   }
 }
