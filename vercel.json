@@ -26,6 +26,6 @@
   ],
   "env": {
     "PYTHONPATH": "/var/task",
-    "DATABASE_URL": "postgres://avnadmin:AVNS_XOFLA-uP0m99AcnD83j@pg-3adecbc2-punith.a.aivencloud.com:26164/defaultdb?sslmode=require"
+    "DATABASE_URL": "ep-purple-cell-a4li5u4n-pooler.us-east-1.aws.neon.tech"
   }
 }
