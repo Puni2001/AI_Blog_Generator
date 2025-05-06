@@ -3,6 +3,7 @@
 ## Project Overview
 
 AI Blog Generator is a Django-based web application that automatically creates blog articles from YouTube video transcripts using advanced AI technologies. This tool streamlines content creation by leveraging video content and transforming it into well-structured, readable blog posts.
+[Watch the demo video] (https://drive.google.com/file/d/1smrHhkOn4pPn1SAP2yDxAn3dcYE4RHaw/view?usp=sharing)
 
 ## Key Features
 
